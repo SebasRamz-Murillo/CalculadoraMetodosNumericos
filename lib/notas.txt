@@ -1,0 +1,18 @@
+y = yc + yp
+
+yc = C1e^x1 + C2e^x2
+
+//formulas yp
+    yp = Ax^2 +Bx + C
+
+    yp = Ax + B
+
+    yp = Ae^2
+
+    yp = AcosX + BsenX
+
+
+Ejemplos:
+y'' + 7y' + 12y = 3x^2 + 2e^{3x} + 2\cos(2x) + 5
+y'' - 2y' - 15y = 4x^2 + 6x + 10 + 2\cos(2x)
+y"+7y’+10=2x^2+7x+9
