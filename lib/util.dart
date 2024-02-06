@@ -27,23 +27,3 @@ String formatNumber(double number) {
     return number.toString();
   }
 }
-
-Map<String, double> obtenerCoeficientes2(String ecuacion) {
-  Map<String, double> coeficientes = {'a': 0, 'b': 0, 'c': 0};
-  String parteIzquierda = ecuacion.split('=')[0];
-  String parteDerecha = ecuacion.split('=')[1];
-  // Consigue los coeficientes de y'', y' y y
-  // Asumiendo que la ecuación está en la forma ay'' + by' + cy = d
-  RegExp exp = RegExp(r'([+-]?[0-9]*[.]?[0-9]*)([A-Za-z])');
-  Iterable<RegExpMatch> matches = exp.allMatches(parteIzquierda);
-  for (RegExpMatch match in matches) {
-    if (match.group(2) == 'y') {
-      coeficientes['c'] = double.parse(match.group(1) ?? '0');
-    } else if (match.group(2) == 'y\'') {
-      coeficientes['b'] = double.parse(match.group(1) ?? '0');
-    } else if (match.group(2) == 'y\"') {
-      coeficientes['a'] = double.parse(match.group(1) ?? '0');
-    }
-  }
-  return coeficientes;
-}

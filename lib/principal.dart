@@ -1,7 +1,6 @@
 import 'package:calculadora_metodos/views/creditos.dart';
-import 'package:calculadora_metodos/views/euler_mejorado.dart';
+import 'package:calculadora_metodos/views/diferenciales_nohomogeneas_view.dart';
 import 'package:flutter/material.dart';
-import 'package:math_expressions/math_expressions.dart';
 
 class PrincipalPage extends StatefulWidget {
   const PrincipalPage({Key? key}) : super(key: key);
@@ -13,7 +12,10 @@ class PrincipalPage extends StatefulWidget {
 class _PrincipalPageState extends State<PrincipalPage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
-    EulerMejorado(),
+    DiferencialesNoHomogeneasView(),
+    Text(
+      'Euler Mejorado',
+    ),
     Text(
       'Runge Kutta',
     ),
@@ -54,6 +56,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.blue,
         items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calculate),
+            label: 'Diferenciales No Homogeneas',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calculate),
             label: 'Euler Mejorado',
