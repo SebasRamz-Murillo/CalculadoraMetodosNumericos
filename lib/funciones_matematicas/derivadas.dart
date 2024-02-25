@@ -1,16 +1,18 @@
 import 'package:calculadora_metodos/funciones_matematicas/diccionarios.dart';
+import 'package:calculadora_metodos/util.dart';
 
 class Derivada {
   final String ecuacion;
+  bool? formatear = false;
   int? cantDerivadas;
   String _resultado = "";
   List<String> _resultados = [];
 
-  Derivada(this.ecuacion, {this.cantDerivadas}) {
+  Derivada(this.ecuacion, {this.cantDerivadas, this.formatear}) {
     if (cantDerivadas != null) {
       _resultados = _derivadasXNivel();
     } else {
-      _resultado = _formatearDerivada(derivarExpresion(ecuacion));
+      _resultado = _formatearDerivada(derivarExpresion(ecuacion, formatear: formatear ?? false));
     }
   }
 
@@ -26,15 +28,14 @@ class Derivada {
   }
 
   String _formatearDerivada(String derivada) {
-    // Usar expresiones regulares para manejar todos los reemplazos de manera más eficiente
-    String resultadoFormateado = derivada
+    String resultadoFormateado = eliminarCerosInutiles(derivada)
         .trim()
         // Reemplaza múltiples "+" seguidos (con o sin espacios entre ellos) por un solo "+"
         .replaceAll(RegExp(r'\s*\+\s*\+'), ' +')
-        // Reemplaza " - +" con " - " para manejar casos como el de tu ejemplo
-        .replaceAll(RegExp(r'\-\s*\+'), ' -')
-        // Opcionalmente, reemplaza múltiples "-" seguidos (con o sin espacios entre ellos) por un solo "-"
-        .replaceAll(RegExp(r'\s*\-\s*\-'), ' -');
+        // Corrige el ajuste para reemplazar " + -" con " - " para manejar casos como el de tu ejemplo
+        .replaceAll(RegExp(r'\+\s*\-'), ' -')
+        // Opcionalmente, reemplaza múltiples "-" seguidos (con o sin espacios entre ellos) por un solo "+"
+        .replaceAll(RegExp(r'\s*\-\s*\-'), ' +');
 
     // Manejar el caso inicial si comienza con "+ " o "- "
     if (resultadoFormateado.startsWith("+ ")) {
@@ -77,7 +78,10 @@ class Derivada {
   }
 
   /// Deriva una expresión compuesta por términos sumados o restados.
-  String derivarExpresion(String expresion) {
+  String derivarExpresion(String expresion, {bool formatear = false}) {
+    if (formatear) {
+      return expresion = _formatearExpresion(expresion);
+    }
     // Separa la expresión en términos individuales.
     List<String> terminos = expresion.split(RegExp(r'(?=[+-])'));
 

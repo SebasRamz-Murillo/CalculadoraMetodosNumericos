@@ -35,30 +35,6 @@ class _CalculadoraPadState extends State<CalculadoraPad> {
   void buildBotonoes() {
     botones = [
       [
-        BotonCalculadora('7'),
-        BotonCalculadora('8'),
-        BotonCalculadora('9'),
-        BotonCalculadora('/'),
-      ],
-      [
-        BotonCalculadora('4'),
-        BotonCalculadora('5'),
-        BotonCalculadora('6'),
-        BotonCalculadora('*'),
-      ],
-      [
-        BotonCalculadora('1'),
-        BotonCalculadora('2'),
-        BotonCalculadora('3'),
-        BotonCalculadora('-'),
-      ],
-      [
-        BotonCalculadora('.'),
-        BotonCalculadora('0'),
-        BotonCalculadora('+'),
-        BotonCalculadora('='),
-      ],
-      [
         BotonCalculadora('sin', returnText: r'\sin'),
         BotonCalculadora('cos', returnText: r'\cos'),
         BotonCalculadora('x√', returnText: r'\sqrt[]{}'),
@@ -68,6 +44,7 @@ class _CalculadoraPadState extends State<CalculadoraPad> {
         BotonCalculadora('√', returnText: r'\sqrt{}'),
         BotonCalculadora('^', returnText: r'^{}'),
         BotonCalculadora('1/x', returnText: r'\frac{1}{}'),
+        BotonCalculadora('C'),
       ],
       [
         BotonCalculadora('∫', returnText: r'\int'),
@@ -116,7 +93,6 @@ class _CalculadoraPadState extends State<CalculadoraPad> {
 
   String parseCalculadoraText(String textNorm) {
     String textParsed = widget.controller.text;
-    bool caracterEspecial = false;
     switch (textNorm) {
       case 'C':
         textParsed = '';
@@ -129,14 +105,12 @@ class _CalculadoraPadState extends State<CalculadoraPad> {
         textParsed = exp.evaluate(EvaluationType.REAL, cm).toString();
         break;
       case '√':
-        caracterEspecial = true;
         textParsed += '|';
         break;
       case '1/x':
         textParsed += r'\frac{1}{}';
         break;
       case '^':
-        caracterEspecial = true;
         textParsed += r'^{}';
         break;
       default:
@@ -149,7 +123,7 @@ class _CalculadoraPadState extends State<CalculadoraPad> {
     return ElevatedButton(
       onPressed: () {
         setState(() {
-          widget.controller.text = parseCalculadoraText(returnText != null ? returnText : character);
+          widget.controller.text = parseCalculadoraText(returnText ?? character);
           print(widget.controller.text);
         });
       },

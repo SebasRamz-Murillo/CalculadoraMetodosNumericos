@@ -41,12 +41,14 @@ class EcuacionesDiferencialesNoHomogeneas {
   List<String> solucionGeneral() {
     Map<String, double> coeficientes = _obtenerCoeficientes(parteIzquierda);
     List<double> raices = calcularRaices(coeficientes['a'] ?? 0, coeficientes['b'] ?? 0, coeficientes['c'] ?? 0);
-    String yc = solucionYC(raices);
+    List<String> yc = solucionYC(raices);
     String ypValue = calculaYp(parteDerecha);
     String yp = 'yp = ${ypValue.isEmpty ? "0" : ypValue}';
     Derivada derivadasYP = Derivada(ypValue, cantDerivadas: 2);
-
-    return [yc, yp, "yp' = ${derivadasYP.resultados[0]}", "yp'' = ${derivadasYP.resultados[1]}"];
+    //SIGUIENTE PASO, DERIVADAS POR COEFICIENTES
+    String sigPaso = "${coeficientes['a']}(${derivadasYP.resultados[1]}) + ${coeficientes['b']}(${derivadasYP.resultados[0]}) ${coeficientes['c']}(${ypValue})";
+    Derivada sigPasoForm = Derivada(sigPaso, formatear: true);
+    return [yc[0], yp, "yp' = ${derivadasYP.resultados[0]}", "yp'' = ${derivadasYP.resultados[1]}", sigPasoForm.resultado];
   }
 
   /// Calcula las raíces de la ecuación característica asociada a la parte homogénea.
@@ -67,11 +69,11 @@ class EcuacionesDiferencialesNoHomogeneas {
   }
 
   /// Forma la solución complementaria de la ecuación diferencial homogénea asociada.
-  String solucionYC(List<double> raices) {
+  List<String> solucionYC(List<double> raices) {
     dynamic r1 = formatNumber(raices[0]);
     dynamic r2 = formatNumber(raices[1]);
-    String yc = 'y_c = c1e^{$r1}x + c2e^{$r2}x';
-    return yc;
+    String yc = 'y_c = c_1 ex^{$r1} + c_2 ex^{$r2}';
+    return [yc, 'c_1 ex^{$r1} + c_2 ex^{$r2}'];
   }
 
   /// Calcula la solución particular de la ecuación diferencial no homogénea.

@@ -18,7 +18,6 @@ class _DiferencialesNoHomogeneasViewState extends State<DiferencialesNoHomogenea
   TextEditingController _controllerCalculadora = TextEditingController();
   List<String> _result = [];
   EcuacionesDiferencialesNoHomogeneas ed = EcuacionesDiferencialesNoHomogeneas("");
-  String _expression = '';
   EjemplosInputsCalculadora ejem = EjemplosInputsCalculadora("noHomogeneas");
 
   late SyntaxTree ast;
@@ -37,7 +36,6 @@ class _DiferencialesNoHomogeneasViewState extends State<DiferencialesNoHomogenea
 
   void _clear() {
     setState(() {
-      _expression = '';
       _result = [];
     });
   }
