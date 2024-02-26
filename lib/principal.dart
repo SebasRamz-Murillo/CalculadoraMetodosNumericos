@@ -1,11 +1,10 @@
 import 'dart:math';
 
-import 'package:calculadora_metodos/models/euler_mejorado_result.dart';
 import 'package:calculadora_metodos/models/newton_raphson.dart';
-import 'package:calculadora_metodos/models/runge_kutta2.dart';
+import 'package:calculadora_metodos/views/EulerMejorado/euler_mejorado_view.dart';
+import 'package:calculadora_metodos/views/NewtonRaphson/newton_raphson_view.dart';
+import 'package:calculadora_metodos/views/RungeKutta/runge_kutta_view.dart';
 import 'package:calculadora_metodos/views/creditos.dart';
-import 'package:calculadora_metodos/views/euler_mejorado_view.dart';
-import 'package:calculadora_metodos/views/runge_kutta.dart';
 import 'package:flutter/material.dart';
 
 class PrincipalPage extends StatefulWidget {
@@ -21,9 +20,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
     //DiferencialesNoHomogeneasView(), //TODO PENDIENTE
     EulerMView(),
     RungeKuttaView(),
-    Text(
-      'Newton Rapson',
-    ),
+    NewtonRaphsonView(),
   ];
 
   void _onItemTapped(int index) {
@@ -36,22 +33,19 @@ class _PrincipalPageState extends State<PrincipalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Text('Metodos Numericos'),
+        backgroundColor: Colors.deepPurpleAccent,
+        title: const Text(
+          'Metodos Numericos',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
-          TextButton.icon(
+/*           TextButton.icon(
               onPressed: () {
-                String stEcuacion = "x^3-x-1";
-                double x0 = 1;
-                NewtonRaphson newton = NewtonRaphson(x0, stEcuacion);
-                NewtonRaphsonSolution sol = newton.solve();
-                print(sol.fValue);
-                for (var i in sol.x) {
-                  print(i);
-                }
+                String f = "f(x) = 2x^2 + 3x + 5";
               },
               icon: Icon(Icons.calculate_outlined),
               label: Text("Formulario")),
+ */
           IconButton(
               onPressed: () {
                 Navigator.push(
@@ -68,7 +62,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.deepPurpleAccent,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.calculate),

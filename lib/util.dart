@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/ast.dart';
 import 'package:flutter_math_fork/tex.dart';
 import 'package:math_expressions/math_expressions.dart' as math;
@@ -71,4 +72,44 @@ math.Expression parseExpression(String expression) {
   math.Expression exp = p.parse(expression);
 
   return exp;
+}
+
+void msgErrors(BuildContext context, String mensaje, {String submensaje = '', int duracion = 5}) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: Colors.red,
+      content: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(right: 5.0),
+            child: Icon(
+              Icons.error_outline,
+              color: Colors.white,
+              size: 35.0,
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                mensaje,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              SizedBox(
+                height: 20.0,
+                child: Text(
+                  submensaje,
+                  style: const TextStyle(fontSize: 14.0),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      duration: Duration(seconds: duracion),
+    ),
+  );
 }

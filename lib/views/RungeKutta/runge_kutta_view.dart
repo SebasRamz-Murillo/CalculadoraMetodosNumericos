@@ -1,6 +1,6 @@
 import 'package:calculadora_metodos/funciones_matematicas/ejemplos.dart';
 import 'package:calculadora_metodos/models/runge_kutta2.dart';
-import 'package:calculadora_metodos/views/runge_kutta_result_view.dart';
+import 'package:calculadora_metodos/views/RungeKutta/runge_kutta_result_view.dart';
 import 'package:calculadora_metodos/widgets/calculadoraMetodos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/ast.dart';

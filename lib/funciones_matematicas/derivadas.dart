@@ -30,18 +30,42 @@ class Derivada {
   String _formatearDerivada(String derivada) {
     String resultadoFormateado = eliminarCerosInutiles(derivada)
         .trim()
+        // Elimina espacios alrededor de "+" y "-" para mejorar la legibilidad
+        //"3 * x^2 - + "
+        .replaceAll(RegExp(r'\s*\+\s*'), ' + ')
+        .replaceAll(RegExp(r'\s*\-\s*'), ' - ')
         // Reemplaza múltiples "+" seguidos (con o sin espacios entre ellos) por un solo "+"
         .replaceAll(RegExp(r'\s*\+\s*\+'), ' +')
-        // Corrige el ajuste para reemplazar " + -" con " - " para manejar casos como el de tu ejemplo
-        .replaceAll(RegExp(r'\+\s*\-'), ' -')
+        // Corrige el ajuste para reemplazar " + -" con " - "
         // Opcionalmente, reemplaza múltiples "-" seguidos (con o sin espacios entre ellos) por un solo "+"
-        .replaceAll(RegExp(r'\s*\-\s*\-'), ' +');
+        .replaceAll(RegExp(r'\s*\-\s*\-'), ' +')
+        // Corrige el ajuste para reemplazar " - +" con " + "
+        .replaceAll(RegExp(r'\s*\-\s*\+'), ' - ');
 
-    // Manejar el caso inicial si comienza con "+ " o "- "
-    if (resultadoFormateado.startsWith("+ ")) {
-      resultadoFormateado = resultadoFormateado.substring(2);
-    } else if (resultadoFormateado.startsWith("- ")) {
-      resultadoFormateado = "-" + resultadoFormateado.substring(2);
+    resultadoFormateado = resultadoFormateado.trim();
+
+    while ((resultadoFormateado.startsWith("+ ") || resultadoFormateado.startsWith("- ")) && (resultadoFormateado.endsWith("+ ") || resultadoFormateado.endsWith("- "))) {
+      // Manejar el caso inicial si comienza con "+ " o "- "
+      if (resultadoFormateado.startsWith("+ ")) {
+        resultadoFormateado = resultadoFormateado.substring(2);
+      } else if (resultadoFormateado.startsWith("- ")) {
+        resultadoFormateado = "-" + resultadoFormateado.substring(2);
+      }
+      // Manejar el caso final si termina con "+ " o "- "
+      if (resultadoFormateado.endsWith("+ ")) {
+        resultadoFormateado = resultadoFormateado.substring(0, resultadoFormateado.length - 2);
+      } else if (resultadoFormateado.endsWith("- ")) {
+        resultadoFormateado = resultadoFormateado.substring(0, resultadoFormateado.length - 2);
+      }
+    }
+
+    if (resultadoFormateado.endsWith(" +") || resultadoFormateado.endsWith(" -")) {
+      resultadoFormateado = resultadoFormateado.substring(0, resultadoFormateado.length - 2);
+    }
+
+    // Formateador para eliminar * que no tienen un valor o variable antes o después
+    if (resultadoFormateado.endsWith("*")) {
+      resultadoFormateado = resultadoFormateado.substring(0, resultadoFormateado.length - 1);
     }
 
     return resultadoFormateado;
@@ -98,12 +122,49 @@ class Derivada {
   }
 
   /// Deriva un término individual.
-  String derivarTermino(String termino) {
+  String derivarTermino(String termino, {bool terminoNormal = true}) {
+    //Termino normal se refiere a una expresion regular, cuando es false significa que viene con var Mayusuclas
     termino = termino.trim();
-
-    // Caso para términos constantes (sin 'x')
     if (!termino.contains('x')) {
       return "0";
+    }
+    //Revisar si es un termino con variable Mayus, si no derivar el termino solo con otra logica
+    if (termino.contains(RegExp(r'[A-Z]'))) {
+      return derivarTermino(termino, terminoNormal: false);
+    }
+
+    if (terminoNormal) {
+      // Caso para términos lineales 'x' (sin exponente)
+      if (termino.endsWith('x') && !termino.contains('^')) {
+        String coeficiente = termino.substring(0, termino.length - 1).trim();
+        return coeficiente.isEmpty ? "1" : coeficiente;
+      }
+      // Caso para términos polinomiales 'x^n'
+      RegExp expPolinomial = RegExp(r'([+-]?)x\s*\^(\d+)');
+      var matchPolinomial = expPolinomial.firstMatch(termino);
+      if (matchPolinomial != null) {
+        String coeficiente = matchPolinomial.group(1)!.replaceAll(" ", "");
+        int exponente = int.parse(matchPolinomial.group(2)!);
+        return exponente == 2 ? "2 * ${coeficiente}x" : "${exponente} * ${coeficiente}x^${exponente - 1}";
+      }
+
+      // Extendido para funciones trigonométricas con argumentos multiplicativos 'cos(kx)', 'sin(kx)'
+      RegExp expTrig = RegExp(r'([+-]?\s*)(\w*)(\d*)(\w{3})\((\d+)x\)');
+      var matchTrig = expTrig.firstMatch(termino);
+      if (matchTrig != null) {
+        String signo = matchTrig.group(1)!.contains("-") ? "-" : "";
+        String coeficiente = matchTrig.group(3)! + matchTrig.group(2)!.trim().replaceAll(" ", "");
+        String funcion = matchTrig.group(4)!;
+        String multiplicadorFunc = matchTrig.group(5) ?? "1";
+        int multiplicadorTotal = (int.tryParse(coeficiente) ?? 1) * int.parse(multiplicadorFunc);
+        String derivadaFuncion = funcion == "sin" ? "cos" : "sin";
+        String resultado = "${signo}${coeficiente}${derivadaFuncion}(${multiplicadorTotal}x)";
+        return resultado.startsWith("-")
+            ? resultado
+            : funcion == "cos"
+                ? "-${resultado}"
+                : resultado;
+      }
     }
 
     // Caso para términos lineales 'Bx' (sin exponente)

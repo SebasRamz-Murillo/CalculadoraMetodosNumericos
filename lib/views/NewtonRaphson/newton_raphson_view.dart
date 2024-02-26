@@ -1,24 +1,23 @@
 import 'package:calculadora_metodos/funciones_matematicas/ejemplos.dart';
-import 'package:calculadora_metodos/models/euler_mejorado_result.dart';
+import 'package:calculadora_metodos/models/newton_raphson.dart';
 import 'package:calculadora_metodos/models/runge_kutta2.dart';
-import 'package:calculadora_metodos/views/euler_mejorado_result_view.dart';
-import 'package:calculadora_metodos/views/runge_kutta_result_view.dart';
+import 'package:calculadora_metodos/views/NewtonRaphson/newton_raphson_resul_view.dart';
+import 'package:calculadora_metodos/views/RungeKutta/runge_kutta_result_view.dart';
 import 'package:calculadora_metodos/widgets/calculadoraMetodos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/ast.dart';
 import 'package:flutter_math_fork/tex.dart';
 
-class EulerMView extends StatefulWidget {
-  const EulerMView({Key? key}) : super(key: key);
+class NewtonRaphsonView extends StatefulWidget {
+  const NewtonRaphsonView({Key? key}) : super(key: key);
 
   @override
-  State<EulerMView> createState() => _EulerMViewState();
+  State<NewtonRaphsonView> createState() => _NewtonRaphsonViewState();
 }
 
-class _EulerMViewState extends State<EulerMView> {
-  late EulerMejoradoSolution resultadoEM;
+class _NewtonRaphsonViewState extends State<NewtonRaphsonView> {
+  late NewtonRaphsonSolution resultadoNR;
 
-  EjemplosInputsCalculadora ejem = EjemplosInputsCalculadora("em");
   bool calculado = false;
   late SyntaxTree ast;
 
@@ -35,30 +34,26 @@ class _EulerMViewState extends State<EulerMView> {
   @override
   Widget build(BuildContext context) {
     void calcula1(Map<String, dynamic> data) {
-      double x0 = double.parse(data['x0']);
-      double y0 = double.parse(data['y0']);
-      double xFinal = double.parse(data['xFinal']);
-      double h = double.parse(data['h']);
+      double xAprx = double.parse(data['x']);
       String funcSt = data['f'];
-
+      int maxN = int.parse(data['n']);
       // Calcular la solución
-      EulerMejorado eulerMejorado = EulerMejorado(h, y0, x0, xFinal, funcSt);
-      EulerMejoradoSolution solution = eulerMejorado.calcular();
-      resultadoEM = solution;
+      NewtonRaphson newtonRaphson = NewtonRaphson(xAprx, funcSt, maxN);
+      resultadoNR = newtonRaphson.solve();
       calculado = true;
       setState(() {});
     }
 
     return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       CalculadoraMetodosPad(
-        tipo: "euler",
+        tipo: "newtonRaphson",
         calcula: (Map<String, dynamic> data) {
           calcula1(data);
         },
       ),
       calculado
-          ? EulerMResultWidget(
-              result: resultadoEM,
+          ? NewtonRaphsonResulWidget(
+              result: resultadoNR,
             )
           : Container()
     ]);

@@ -12,7 +12,7 @@ class RungeKutta4 {
     final k2Values = <double>[];
     final k3Values = <double>[];
     final k4Values = <double>[];
-    while (x0 < xFinal) {
+    while (x0 <= xFinal) {
       final k1 = f({'x': x0, 'y': y0}).toDouble();
       final k2 = f({'x': x0 + h / 2, 'y': y0 + k1 * h / 2}).toDouble();
       final k3 = f({'x': x0 + h / 2, 'y': y0 + k2 * h / 2}).toDouble();

@@ -1,3 +1,4 @@
+import 'package:calculadora_metodos/util.dart';
 import 'package:flutter/material.dart';
 
 class CalculadoraMetodosPad extends StatefulWidget {
@@ -97,6 +98,22 @@ class _CalculadoraMetodosPadState extends State<CalculadoraMetodosPad> {
           ),
         ];
         break;
+      case "newtonRaphson":
+        inputs = [
+          TextInputCustom(
+            labelText: "x0",
+            controller: _controllerX0,
+            keyboardType: TextInputType.multiline,
+            maxLines: 1,
+          ),
+          TextInputCustom(
+            labelText: "Máximo de iteraciones",
+            controller: _controllerN,
+            keyboardType: TextInputType.multiline,
+            maxLines: 1,
+          ),
+        ];
+        break;
       default:
         inputs = [];
     }
@@ -129,9 +146,39 @@ class _CalculadoraMetodosPadState extends State<CalculadoraMetodosPad> {
           "xFinal": _controllerN.text,
           "h": _controllerA.text,
         };
+      case "newtonRaphson":
+        return {
+          "f": _controllerf.text,
+          "x": _controllerX0.text,
+          "n": _controllerN.text,
+        };
       default:
         return {};
     }
+  }
+
+  Exception? _validaciones() {
+    switch (widget.tipo) {
+      case "rungeKutta":
+        if (double.parse(_controllerN.text) < double.parse(_controllerX0.text)) {
+          return Exception("xFinal debe ser mayor que x0");
+        }
+
+        break;
+      case "euler":
+        if (double.parse(_controllerN.text) < double.parse(_controllerX0.text)) {
+          return Exception("xFinal debe ser mayor que x0");
+        }
+        break;
+      case "newtonRaphson":
+        if (int.parse(_controllerN.text) < 1) {
+          return Exception("El número de iteraciones debe ser mayor que 0");
+        }
+        break;
+      default:
+        return Exception("Error no conocido");
+    }
+    return null;
   }
 
   @override
@@ -142,6 +189,34 @@ class _CalculadoraMetodosPadState extends State<CalculadoraMetodosPad> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          TextButton(
+              onPressed: () {
+                switch (widget.tipo) {
+                  case "rungeKutta":
+                    _controllerf.text = "x * sqrt(y)";
+                    _controllerX0.text = "1";
+                    _controllerY0.text = "4";
+                    _controllerN.text = "1.6";
+                    _controllerA.text = "0.2";
+                    break;
+                  case "euler":
+                    _controllerf.text = " 0.4 * x * y";
+                    _controllerX0.text = "1";
+                    _controllerY0.text = "1";
+                    _controllerN.text = "2";
+                    _controllerA.text = "0.1";
+                    break;
+                  case "newtonRaphson":
+                    _controllerf.text = "x^3 - x - 1";
+                    _controllerX0.text = "1";
+                    _controllerN.text = "100";
+                    break;
+                  default:
+                }
+                setState(() {});
+              },
+              child: const Text("Ejemplo de input")),
+
           // Display Result
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -153,15 +228,24 @@ class _CalculadoraMetodosPadState extends State<CalculadoraMetodosPad> {
               controller: _controllerf,
               keyboardType: TextInputType.multiline,
               maxLines: null,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Inserta la funcion f(x,y) aquí',
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: widget.tipo == "newtonRaphson" ? 'Inserta la función f(x) aquí' : 'Inserta la función f(x,y) aquí',
               ),
             ),
           ),
           TextButton(
               onPressed: () {
-                widget.calcula(_getValues());
+                try {
+                  if (_validaciones() != null) {
+                    throw _validaciones()!;
+                  }
+                  widget.calcula(_getValues());
+                } catch (e) {
+                  msgErrors(context, e.toString());
+                  return;
+                }
+                _focusNode.unfocus();
                 setState(() {});
               },
               child: const Text('Calcular')),
@@ -185,7 +269,7 @@ class TextInputCustom {
         keyboardType: keyboardType,
         maxLines: maxLines,
         decoration: InputDecoration(
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
           labelText: labelText,
         ),
       ),

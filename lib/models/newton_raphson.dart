@@ -4,8 +4,9 @@ import 'package:function_tree/function_tree.dart';
 class NewtonRaphson {
   final double _initialGuess;
   final String _fSt;
+  final int _maxIterations;
 
-  NewtonRaphson(this._initialGuess, this._fSt);
+  NewtonRaphson(this._initialGuess, this._fSt, this._maxIterations);
 
   NewtonRaphsonSolution solve() {
     var f = _fSt.toSingleVariableFunction('x');
@@ -14,7 +15,10 @@ class NewtonRaphson {
 
     double x = _initialGuess;
     List<double> xValues = [];
-    for (int i = 0; i < 100; i++) {
+    List<double> f1Values = [];
+    List<double> f2Values = [];
+
+    for (int i = 0; i < _maxIterations; i++) {
       double fValue = f(x).toDouble();
       double fDerivativeValue = fDerivative(x).toDouble();
 
@@ -24,9 +28,11 @@ class NewtonRaphson {
 
       x = x - (fValue / fDerivativeValue);
       xValues.add(x);
+      f1Values.add(fValue);
+      f2Values.add(fDerivativeValue);
 
       if (fValue.abs() < 1e-10) {
-        return NewtonRaphsonSolution(xValues, fValue);
+        return NewtonRaphsonSolution(xValues, f1Values, f2Values);
       }
     }
 
@@ -36,7 +42,8 @@ class NewtonRaphson {
 
 class NewtonRaphsonSolution {
   final List<double> x;
-  final double fValue;
+  final List<double> fValue;
+  final List<double> fDerivateValue;
 
-  NewtonRaphsonSolution(this.x, this.fValue);
+  NewtonRaphsonSolution(this.x, this.fValue, this.fDerivateValue);
 }

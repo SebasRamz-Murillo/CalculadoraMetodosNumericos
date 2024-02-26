@@ -23,7 +23,7 @@ class EulerMejorado {
     double x = _x0;
     double y = _y0;
 
-    while (x < _xFinal) {
+    while (x <= _xFinal) {
       double yN = y + _h * _f({'x': x, 'y': y});
       double yAproximado = y + (_h / 2) * (_f({'x': x, 'y': y}) + _f({'x': x + _h, 'y': yN}));
       double yRealActual = _fActual(x + _h, yN);
